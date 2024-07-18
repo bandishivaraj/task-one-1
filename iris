@@ -1,0 +1,26 @@
+
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn.preprocessing import LabelEncoder
+
+data = pd.read_csv('iris.csv')
+
+le = LabelEncoder()
+data['variety'] = le.fit_transform(data['variety'])
+
+X = data.drop(columns='variety')  # Make sure X has meaningful column names
+y = data['variety']
+
+knn = KNeighborsClassifier(n_neighbors=3)
+
+scores = cross_val_score(knn, X, y, cv=5)
+print(f'Cross-Validation Accuracy Scores: {scores}')
+print(f'Mean Accuracy: {scores.mean():.2f}')
+
+knn.fit(X, y)
+
+new_sample = [[5.1, 3.5, 1.4, 0.2]]  
+prediction = knn.predict(new_sample)
+predicted_species = le.inverse_transform(prediction)
+print(f'Predicted species: {predicted_species[0]}') 
